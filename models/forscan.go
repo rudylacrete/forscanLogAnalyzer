@@ -1,9 +1,10 @@
 package models
 
 var ForscanFields = []string{
-	"RPM",
-	"VSS",
-	"TURBO",
+	"rpm",
+	"vss",
+	"turbo",
+	"fuelpw",
 }
 
 type ForscanLogs struct {

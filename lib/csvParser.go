@@ -24,9 +24,9 @@ func parseHeader(header []string) (hm headerMapping, fields []string) {
 	hm = make(headerMapping)
 	for i, val := range header {
 		for _, label := range models.ForscanFields {
-			if strings.Contains(strings.ToLower(val), strings.ToLower(label)) {
+			if strings.Contains(strings.ToLower(val), label) {
 				if _, ok := hm[label]; !ok {
-					fields = append(fields, strings.ToLower(label))
+					fields = append(fields, label)
 				}
 				hm[label] = i
 			}
@@ -42,7 +42,7 @@ func ParseFile(file string, logger io.Writer) (logs *models.ForscanLogs, err err
 		return
 	}
 	parser := csv.NewReader(bytes.NewReader(f))
-	parser.Comma = ';'
+	parser.Comma = ','
 	headerParsed := false
 	var hm headerMapping
 	var fields []string
@@ -65,7 +65,8 @@ func ParseFile(file string, logger io.Writer) (logs *models.ForscanLogs, err err
 			continue
 		}
 		entry := make([]float64, 0, len(hm))
-		for f, i := range hm {
+		for _, f := range logs.Fields {
+			i := hm[f]
 			if record[i] == "-" {
 				entry = append(entry, 0)
 				continue
@@ -73,6 +74,7 @@ func ParseFile(file string, logger io.Writer) (logs *models.ForscanLogs, err err
 			v, err := strconv.ParseFloat(record[i], 64)
 			if err != nil {
 				fprintf(logger, "An error occured while parsing field %s: %s", f, err)
+				entry = append(entry, 0)
 				continue
 			}
 			entry = append(entry, v)

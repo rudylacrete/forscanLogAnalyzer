@@ -42,7 +42,7 @@ func (p *TurboPlugin) Transform(logs *models.ForscanLogs) error {
 	fi := utils.ArrayIndex(logs.Fields, pluginField)
 	if fi == -1 {
 		// if turbo field is not here, nothing to do
-		return nil
+		return fmt.Errorf("turbo field is missing")
 	}
 	//TODO manage other units
 	for _, e := range logs.Values {

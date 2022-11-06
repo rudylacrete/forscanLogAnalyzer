@@ -58,6 +58,7 @@ func (a *App) LoadLogFile() (logs *models.ForscanLogs, err error) {
 	}
 	plugins := []models.Plugin{
 		plugin.NewTurboPlugin(plugin.Bar),
+		plugin.NewInjectorDutyCyclePlugin(),
 	}
 	logs, err = lib.ParseFile(p, a.logger)
 	if err != nil {
@@ -67,7 +68,7 @@ func (a *App) LoadLogFile() (logs *models.ForscanLogs, err error) {
 		runtime.LogDebugf(a.ctx, "Applying plugin: %s\n", p.Info())
 		plgErr := p.Transform(logs)
 		if plgErr != nil {
-			runtime.LogErrorf(a.ctx, "An error occured during plugin transform: %s\n", err)
+			runtime.LogErrorf(a.ctx, "An error occured during plugin transform: %s\n", plgErr)
 		}
 	}
 	return logs, err
